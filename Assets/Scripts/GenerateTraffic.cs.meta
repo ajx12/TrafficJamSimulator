@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7277b6884f565d6489b5c9eb24c207c4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - RedCar: {fileID: 6758983135654227288, guid: de86d0591a4451a4488cc271ff37558a, type: 3}
+  - BlueCar: {fileID: 6173456250622711511, guid: e949de95dc4d8844fbee41ad152b4e91, type: 3}
+  - OrangeCar: {fileID: 1079300186618957496, guid: 9eafa01cc683ebe49a0266e0f1b3acf0, type: 3}
+  - BlackCar: {fileID: 7089050194127134633, guid: 4eb236a0e700888469941b97860b8b59, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
