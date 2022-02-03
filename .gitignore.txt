@@ -1,0 +1,2 @@
+C:\Users\Alexa\Documents\trafficJamSimulator\TrafficJamSimulator\Library\ArtifactDB
+C:\Users\Alexa\Documents\trafficJamSimulator\TrafficJamSimulator\Library\Artifacts

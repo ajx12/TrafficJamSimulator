@@ -17,6 +17,7 @@ public class BoyRacer : SimpleCar
     void Update()
     {
         moveTheCar();
+        int x = 2;
     }
 
     public override void moveTheCar()
