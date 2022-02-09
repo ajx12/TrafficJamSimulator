@@ -6,10 +6,10 @@ public abstract class SimpleCar : MonoBehaviour
 {
     public int speed = 60;
     public Vector3 userDirection = Vector3.forward;
-    public string lane = "";
-    protected GameObject Lane1;
-    protected GameObject Lane2;
-    protected GameObject Lane3;
+    public ArrayList lane;
+    protected ArrayList Lane1;
+    protected ArrayList Lane2;
+    protected ArrayList Lane3;
     // Start is called before the first frame update
     void Start()
     {

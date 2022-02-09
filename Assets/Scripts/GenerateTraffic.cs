@@ -17,6 +17,7 @@ public class GenerateTraffic : MonoBehaviour
     public GameObject Lane1;
     public GameObject Lane2;
     public GameObject Lane3;
+    public GameObject theLane;
 
     int count = 0;
 
@@ -29,17 +30,20 @@ public class GenerateTraffic : MonoBehaviour
         Lane1 = mainSpawner.L1;
         Lane2 = mainSpawner.L2;
         Lane3 = mainSpawner.L3;
-        if (this == Lane1)
+        if (this.gameObject == Lane1)
         {
             whichLane = 1;
+            theLane = Lane1;
         }
-        if (this == Lane2)
+        if (this.gameObject == Lane2)
         {
             whichLane = 2;
+            theLane = Lane2;
         }
-        if (this == Lane3)
+        if (this.gameObject == Lane3)
         {
             whichLane = 3;
+            theLane = Lane3;
         }
     }
 
@@ -55,23 +59,44 @@ public class GenerateTraffic : MonoBehaviour
             if (whichColour == 1)
             {
                 print("Red");
-                GameObject newCar = Instantiate(RedCar, transform);                
+                GameObject newCar = Instantiate(RedCar, transform);
+                addNewCarToLane(newCar);
             }
             if (whichColour == 2)
             {
                 print("Blue");
-                Instantiate(BlueCar, transform);
+                GameObject newCar = Instantiate(BlueCar, transform);
+                addNewCarToLane(newCar);
             }
             if (whichColour == 3)
             {
                 print("Orange");
-                Instantiate(OrangeCar, transform);
+                GameObject newCar = Instantiate(OrangeCar, transform);
+                addNewCarToLane(newCar);
             }
             if (whichColour == 4)
             {
                 print("Black");
-                Instantiate(BlackCar, transform);
+                GameObject newCar = Instantiate(BlackCar, transform);
+                addNewCarToLane(newCar);
             }
         }
     }
+
+    void addNewCarToLane(GameObject car)
+    {
+        if (theLane == Lane1)
+        {
+            mainSpawner.L1List.Add(car);
+        }
+        if (theLane == Lane2)
+        {
+            mainSpawner.L2List.Add(car);
+        }
+        if (theLane == Lane3)
+        {
+            mainSpawner.L3List.Add(car);
+        }
+    }
+
 }

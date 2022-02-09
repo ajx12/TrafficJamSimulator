@@ -5,13 +5,15 @@ using UnityEngine;
 public class SafeDriver : SimpleCar
 {
 
+    //Black Car
+
     // Start is called before the first frame update
     void Start()
     {
         this.speed = 60;
-        Lane1 = mainSpawner.L1;
-        Lane2 = mainSpawner.L2;
-        Lane3 = mainSpawner.L3;
+        Lane1 = mainSpawner.L1List;
+        Lane2 = mainSpawner.L2List;
+        Lane3 = mainSpawner.L3List;
     }
 
     // Update is called once per frame

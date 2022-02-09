@@ -10,6 +10,9 @@ public class mainSpawner : MonoBehaviour
     public static GameObject L1;
     public static GameObject L2;
     public static GameObject L3;
+    public static ArrayList L1List = new ArrayList();
+    public static ArrayList L2List = new ArrayList();
+    public static ArrayList L3List = new ArrayList();
     // Start is called before the first frame update
     void Start()
     {
