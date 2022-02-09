@@ -23,7 +23,6 @@ public class GenerateTraffic : MonoBehaviour
 
     int nextSpawn = 25;
 
-    int whichLane = 0;
 
     void Start()
     {
@@ -32,17 +31,14 @@ public class GenerateTraffic : MonoBehaviour
         Lane3 = mainSpawner.L3;
         if (this.gameObject == Lane1)
         {
-            whichLane = 1;
             theLane = Lane1;
         }
         if (this.gameObject == Lane2)
         {
-            whichLane = 2;
             theLane = Lane2;
         }
         if (this.gameObject == Lane3)
         {
-            whichLane = 3;
             theLane = Lane3;
         }
     }
@@ -55,28 +51,28 @@ public class GenerateTraffic : MonoBehaviour
         {
             count = 0;
             nextSpawn = Random.Range(22, 45);
-            int whichColour = Random.Range(1, 5); //random from 1 to 2
+            int whichColour = Random.Range(1, 5); //random from 1 to 4
             if (whichColour == 1)
             {
-                print("Red");
+                //print("Red");
                 GameObject newCar = Instantiate(RedCar, transform);
                 addNewCarToLane(newCar);
             }
             if (whichColour == 2)
             {
-                print("Blue");
+                //print("Blue");
                 GameObject newCar = Instantiate(BlueCar, transform);
                 addNewCarToLane(newCar);
             }
             if (whichColour == 3)
             {
-                print("Orange");
+                //print("Orange");
                 GameObject newCar = Instantiate(OrangeCar, transform);
                 addNewCarToLane(newCar);
             }
             if (whichColour == 4)
             {
-                print("Black");
+                //print("Black");
                 GameObject newCar = Instantiate(BlackCar, transform);
                 addNewCarToLane(newCar);
             }
