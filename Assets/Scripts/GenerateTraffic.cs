@@ -6,6 +6,11 @@ public class GenerateTraffic : MonoBehaviour
 {
     // Start is called before the first frame update
 
+    int brChance; // boy racer chance (out of 20)
+    int safeChance; // safe driver chance
+    int sunChance; //sunday driver chance
+    int tgChance; //tail gater chance
+
     [SerializeField] GameObject RedCar;
 
     [SerializeField] GameObject BlueCar;
@@ -32,14 +37,26 @@ public class GenerateTraffic : MonoBehaviour
         if (this.gameObject == Lane1)
         {
             theLane = Lane1;
+            brChance = 1; // boy racer chance
+            safeChance = 9; // safe driver chance
+            sunChance = 19; //sunday driver chance
+            tgChance = 20; //tail gater chance
         }
         if (this.gameObject == Lane2)
         {
             theLane = Lane2;
+            brChance = 8; // boy racer chance
+            safeChance = 12; // safe driver chance
+            sunChance = 14; //sunday driver chance
+            tgChance = 20; //tail gater chance
         }
         if (this.gameObject == Lane3)
         {
             theLane = Lane3;
+            brChance = 10; // boy racer chance
+            safeChance = 0; // safe driver chance
+            sunChance = 0; //sunday driver chance
+            tgChance = 20; //tail gater chance
         }
     }
 
@@ -51,33 +68,47 @@ public class GenerateTraffic : MonoBehaviour
         {
             count = 0;
             nextSpawn = Random.Range(22, 45);
-            int whichColour = Random.Range(1, 5); //random from 1 to 4
-            if (whichColour == 1)
+            int whichColour = Random.Range(1, 21); //random from 1 to 20
+            if (brChance != 0)
             {
-                //print("Red");
-                GameObject newCar = Instantiate(RedCar, transform);
-                addNewCarToLane(newCar);
+                if (whichColour <= brChance)
+                {
+                    //spawn a boy racer
+                    GameObject newCar = Instantiate(OrangeCar, transform);
+                    addNewCarToLane(newCar);
+                    return;
+                }
             }
-            if (whichColour == 2)
+            if (safeChance != 0)
             {
-                //print("Blue");
-                GameObject newCar = Instantiate(BlueCar, transform);
-                addNewCarToLane(newCar);
+                if (whichColour <= safeChance) //we know from condition above that "whichColour" must be therefore larger than brChance
+                {
+                    GameObject newCar = Instantiate(BlackCar, transform);
+                    addNewCarToLane(newCar);
+                    return;
+                }
             }
-            if (whichColour == 3)
+            if (sunChance != 0)
             {
-                //print("Orange");
-                GameObject newCar = Instantiate(OrangeCar, transform);
-                addNewCarToLane(newCar);
+                if (whichColour <= sunChance)
+                {
+                    GameObject newCar = Instantiate(BlueCar, transform);
+                    addNewCarToLane(newCar);
+                    return;
+                }
             }
-            if (whichColour == 4)
+            if (tgChance != 0)
             {
-                //print("Black");
-                GameObject newCar = Instantiate(BlackCar, transform);
-                addNewCarToLane(newCar);
+                if (whichColour <= tgChance)
+                {
+                    GameObject newCar = Instantiate(RedCar, transform);
+                    addNewCarToLane(newCar);
+                    return;
+                }
             }
         }
     }
+
 
     void addNewCarToLane(GameObject car)
     {
