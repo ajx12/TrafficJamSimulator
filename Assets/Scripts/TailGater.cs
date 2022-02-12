@@ -52,6 +52,7 @@ public class TailGater : SimpleCar
             {
                 //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed - 1;
+                carInfrontAttributes.holdingSomeoneUp = true;
             }
         }
 
@@ -60,6 +61,46 @@ public class TailGater : SimpleCar
             lane.RemoveAt(currentIndex);
             Destroy(thisCar);
         }
+    }
+
+    private void tryToMoveLane()
+    {
+        ArrayList prevLane = Lane1;
+        if (lane == Lane1)
+        {
+            //do nothing for now
+        }
+        if (lane == Lane2)
+        {
+            prevLane = Lane1;
+        }
+        if (lane == Lane3)
+        {
+            prevLane = Lane2;
+        }
+        if (lane == Lane2 || lane == Lane3)
+        {
+            float currentPos = thisCar.transform.position.z;
+            float upperBound = currentPos + 5;
+            float lowerBound = currentPos - 10;
+            bool exceptionFound = false;
+            for (int i = 0; i < prevLane.Count; i++)
+            {
+                GameObject x = (GameObject)prevLane[i];
+                if (x.transform.position.z > upperBound && x.transform.position.z < lowerBound)
+                {
+                    //we have found a car too close so do not attempt lane shift
+                    exceptionFound = true;
+                    print(thisCar + "   Can't shift lanes yet.");
+                    i = prevLane.Count; //end the for loop
+                }
+            }
+            if (exceptionFound == false)
+            {
+                userDirection = Vector3.forward + Vector3.left;
+            }
+        }
+
     }
 
     private void whichLaneStart()

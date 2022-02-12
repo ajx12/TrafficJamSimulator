@@ -49,16 +49,11 @@ public class SundayDriver : SimpleCar
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
             float distanceDifference = 0;
-            if (thisCar.transform.position.z < 0) // if the cars are below 0 then add instead.
+
+            distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
+            if (distanceDifference <= 15)
             {
-                distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
-            }
-            else
-            {
-                distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
-            }
-            if (distanceDifference <= 20)
-            {
+                //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed - 1;
             }
         }
