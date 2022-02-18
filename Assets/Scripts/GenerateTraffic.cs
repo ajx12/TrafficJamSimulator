@@ -67,7 +67,7 @@ public class GenerateTraffic : MonoBehaviour
         if (count > nextSpawn)
         {
             count = 0;
-            nextSpawn = Random.Range(22, 45);
+            nextSpawn = Random.Range(15, 30);
             int whichColour = Random.Range(1, 21); //random from 1 to 20
             if (brChance != 0)
             {

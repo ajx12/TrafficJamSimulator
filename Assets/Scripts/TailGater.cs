@@ -5,7 +5,7 @@ using UnityEngine;
 public class TailGater : SimpleCar
 {
     //Red Car
-    GameObject thisCar;
+    
     bool activated = false;
     // Start is called before the first frame update
     void Start()
@@ -22,17 +22,27 @@ public class TailGater : SimpleCar
     // Update is called once per frame
     void Update()
     {
-        moveTheCar();
+        if (activated == true)
+        {
+            moveTheCar();
+        }
     }
 
 
     int count = 0;
     public override void moveTheCar()
     {
-        if (count == 15 && speed < 76)
+        if (count == 15)
         {
+            if (speed < 76)
+            {
+                speed++;
+            }
+            if (holdingSomeoneUp == true && isMergingLane == false)
+            {
+                tryToMoveInwards();
+            }
             count = 0;
-            speed++;
         }
         else if (count < 15)
         {
@@ -40,18 +50,28 @@ public class TailGater : SimpleCar
         }
         transform.Translate(userDirection * speed * Time.deltaTime);
         int currentIndex = lane.IndexOf(thisCar);
+
         // z pos needs to be at most 10 away from the car in front.
-        if (currentIndex != 0)
+        if (currentIndex > 0)
         {
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
+            if (isMergingLane == true)
+            {
+                if (thisCar.transform.position.x <= carInfront.transform.position.x)
+                {
+                    isMergingLane = false;
+                    holdingSomeoneUp = false;
+                    userDirection = Vector3.forward;
+                }
+            }
             float distanceDifference = 0;
 
             distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
             if (distanceDifference <= 15)
             {
                 //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
-                speed = carInfrontAttributes.speed - 1;
+                speed = carInfrontAttributes.speed;
                 carInfrontAttributes.holdingSomeoneUp = true;
             }
         }
@@ -63,12 +83,12 @@ public class TailGater : SimpleCar
         }
     }
 
-    private void tryToMoveLane()
+    protected void tryToMoveInwards()
     {
-        ArrayList prevLane = Lane1;
+        ArrayList prevLane = new ArrayList();
         if (lane == Lane1)
         {
-            //do nothing for now
+            unableToShift = true;
         }
         if (lane == Lane2)
         {
@@ -81,13 +101,13 @@ public class TailGater : SimpleCar
         if (lane == Lane2 || lane == Lane3)
         {
             float currentPos = thisCar.transform.position.z;
-            float upperBound = currentPos + 5;
-            float lowerBound = currentPos - 10;
+            float upperBound = currentPos + 5; //further in front of the car. (addition becuase cars are heading towards z point 500)
+            float lowerBound = currentPos - 10; // further behind of the car.
             bool exceptionFound = false;
             for (int i = 0; i < prevLane.Count; i++)
             {
                 GameObject x = (GameObject)prevLane[i];
-                if (x.transform.position.z > upperBound && x.transform.position.z < lowerBound)
+                if (x.transform.position.z < upperBound && x.transform.position.z > lowerBound)
                 {
                     //we have found a car too close so do not attempt lane shift
                     exceptionFound = true;
@@ -98,10 +118,35 @@ public class TailGater : SimpleCar
             if (exceptionFound == false)
             {
                 userDirection = Vector3.forward + Vector3.left;
+                isMergingLane = true;
+                int indexToInsertAt = findindexForLaneInsertion(prevLane);
+                prevLane.Insert(indexToInsertAt, thisCar);
+                lane.Remove(thisCar);
+                lane = prevLane;
+            }
+            else
+            {
+                unableToShift = true;
             }
         }
 
     }
+
+    private int findindexForLaneInsertion(ArrayList prevLane)
+    {
+        float currZ = thisCar.transform.position.z;
+        for (int i = 0; i < prevLane.Count; i++)
+        {
+            GameObject x = (GameObject)prevLane[i];
+            if (x.transform.position.z < currZ)
+            {
+                return i - 1;
+            }
+        }
+        return -1;
+    }
+
+
 
     private void whichLaneStart()
     {
