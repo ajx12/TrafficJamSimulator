@@ -96,69 +96,6 @@ public class SafeDriver : SimpleCar
         }
     }
 
-    protected void tryToMoveInwards()
-    {
-        ArrayList prevLane = Lane1;
-        if (lane == Lane1)
-        {
-            unableToShift = true;
-        }
-        if (lane == Lane2)
-        {
-            prevLane = Lane1;
-        }
-        if (lane == Lane3)
-        {
-            prevLane = Lane2;
-        }
-        if (lane == Lane2 || lane == Lane3)
-        {
-            float currentPos = thisCar.transform.position.z;
-            float upperBound = currentPos + 8; //further in front of the car. (addition becuase cars are heading towards z point 500)
-            float lowerBound = currentPos - 10; // further behind of the car.
-            bool exceptionFound = false;
-            for (int i = 0; i < prevLane.Count; i++)
-            {
-                GameObject x = (GameObject)prevLane[i];
-                if (x.transform.position.z < upperBound && x.transform.position.z > lowerBound)
-                {
-                    //we have found a car too close so do not attempt lane shift
-                    exceptionFound = true;
-                    print(thisCar + "   Can't shift lanes yet.");
-                    i = prevLane.Count; //end the for loop
-                }
-            }
-            if (exceptionFound == false)
-            {
-                userDirection = Vector3.forward + Vector3.left;
-                isMergingLane = true;
-                int indexToInsertAt = findindexForLaneInsertion(prevLane);
-                prevLane.Insert(indexToInsertAt, thisCar);
-                lane.Remove(thisCar);
-                lane = prevLane;
-            }
-            else
-            {
-                unableToShift = true;
-            }
-        }
-
-    }
-
-    private int findindexForLaneInsertion(ArrayList prevLane)
-    {
-        float currZ = thisCar.transform.position.z;
-        for (int i = 0; i < prevLane.Count; i++)
-        {
-            GameObject x = (GameObject)prevLane[i];
-            if (x.transform.position.z < currZ)
-            {
-                return i;
-            }
-        }
-        return 0;
-    }
-
     private void whichLaneStart()
     {
         //print("Lane 1 count: " + Lane1.Count + "Lane 2 count: " + Lane2.Count + "Lane 3 count:" + Lane3.Count);
