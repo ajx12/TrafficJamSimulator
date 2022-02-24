@@ -32,11 +32,11 @@ public class BoyRacer : SimpleCar
     int count = 0; // after every set frames, the car speed will increase.
     public override void moveTheCar()
     {
-        if (count == 20)
+        if (count == 10)
         {
             if (speed < 81)
             {
-                speed++;
+                speed = speed + 3;
             }
             if (holdingSomeoneUp == true && isMergingLane == false)
             {
@@ -51,7 +51,20 @@ public class BoyRacer : SimpleCar
         transform.Translate(userDirection * speed * Time.deltaTime);
         int currentIndex = lane.IndexOf(thisCar);
         // z pos needs to be at most 10 away from the car in front.
-        if (currentIndex != 0)
+        if (currentIndex == 0)
+        {
+            if (isMergingLane == true)
+            {
+                GameObject carBehind = (GameObject)lane[currentIndex + 1];
+                if (thisCar.transform.position.x <= carBehind.transform.position.x)
+                {
+                    isMergingLane = false;
+                    holdingSomeoneUp = false;
+                    userDirection = Vector3.forward;
+                }
+            }
+        }
+        if (currentIndex > 0)
         {
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
@@ -67,7 +80,7 @@ public class BoyRacer : SimpleCar
             float distanceDifference = 0;
 
             distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
-            if (distanceDifference <= 15)
+            if (distanceDifference <= 8)
             {
                 //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed;
@@ -103,13 +116,13 @@ public class BoyRacer : SimpleCar
         if (lane == Lane2 || lane == Lane3)
         {
             float currentPos = thisCar.transform.position.z;
-            float upperBound = currentPos + 5; //further in front of the car. (addition becuase cars are heading towards z point 500)
+            float upperBound = currentPos + 8; //further in front of the car. (addition becuase cars are heading towards z point 500)
             float lowerBound = currentPos - 10; // further behind of the car.
             bool exceptionFound = false;
             for (int i = 0; i < prevLane.Count; i++)
             {
                 GameObject x = (GameObject)prevLane[i];
-                if (x.transform.position.z > upperBound && x.transform.position.z < lowerBound)
+                if (x.transform.position.z < upperBound && x.transform.position.z > lowerBound)
                 {
                     //we have found a car too close so do not attempt lane shift
                     exceptionFound = true;
@@ -124,6 +137,7 @@ public class BoyRacer : SimpleCar
                 int indexToInsertAt = findindexForLaneInsertion(prevLane);
                 prevLane.Insert(indexToInsertAt, thisCar);
                 lane.Remove(thisCar);
+                lane = prevLane;
             }
             else
             {
@@ -141,7 +155,7 @@ public class BoyRacer : SimpleCar
             GameObject x = (GameObject)prevLane[i];
             if (x.transform.position.z < currZ)
             {
-                return i - 1;
+                return i;
             }
         }
         return -1;

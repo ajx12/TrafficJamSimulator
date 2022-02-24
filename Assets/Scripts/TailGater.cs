@@ -32,7 +32,7 @@ public class TailGater : SimpleCar
     int count = 0;
     public override void moveTheCar()
     {
-        if (count == 15)
+        if (count == 10)
         {
             if (speed < 76)
             {
@@ -52,6 +52,19 @@ public class TailGater : SimpleCar
         int currentIndex = lane.IndexOf(thisCar);
 
         // z pos needs to be at most 10 away from the car in front.
+        if (currentIndex == 0)
+        {
+            if (isMergingLane == true)
+            {
+                GameObject carBehind = (GameObject)lane[currentIndex + 1];
+                if (thisCar.transform.position.x <= carBehind.transform.position.x)
+                {
+                    isMergingLane = false;
+                    holdingSomeoneUp = false;
+                    userDirection = Vector3.forward;
+                }
+            }
+        }
         if (currentIndex > 0)
         {
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
@@ -68,7 +81,7 @@ public class TailGater : SimpleCar
             float distanceDifference = 0;
 
             distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
-            if (distanceDifference <= 15)
+            if (distanceDifference <= 8)
             {
                 //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed;
@@ -101,7 +114,7 @@ public class TailGater : SimpleCar
         if (lane == Lane2 || lane == Lane3)
         {
             float currentPos = thisCar.transform.position.z;
-            float upperBound = currentPos + 5; //further in front of the car. (addition becuase cars are heading towards z point 500)
+            float upperBound = currentPos + 8; //further in front of the car. (addition becuase cars are heading towards z point 500)
             float lowerBound = currentPos - 10; // further behind of the car.
             bool exceptionFound = false;
             for (int i = 0; i < prevLane.Count; i++)
@@ -140,7 +153,7 @@ public class TailGater : SimpleCar
             GameObject x = (GameObject)prevLane[i];
             if (x.transform.position.z < currZ)
             {
-                return i - 1;
+                return i;
             }
         }
         return -1;
