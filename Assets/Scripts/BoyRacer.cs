@@ -11,7 +11,6 @@ public class BoyRacer : SimpleCar
     void Start()
     {
         thisCar = this.gameObject;
-        this.speed = 60;
         Lane1 = mainSpawner.L1List;
         Lane2 = mainSpawner.L2List;
         Lane3 = mainSpawner.L3List;
@@ -30,27 +29,37 @@ public class BoyRacer : SimpleCar
 
 
     int count = 0; // after every set frames, the car speed will increase.
+    int cooldown = 0;
     public override void moveTheCar()
     {
-        if (count == 10)
+        if (ShiftOnCooldown == true)
         {
-            if (speed < 81)
+            cooldown++;
+            if (cooldown == 75)
             {
-                speed = speed + 3;
+                ShiftOnCooldown = false;
+                cooldown = 0;
             }
-            if (holdingSomeoneUp == true && isMergingLane == false)
+        }
+        if (count >= 6)
+        {
+            if (speed < laneSpeed + 10)
             {
-                tryToMoveInwards();
-            }
-            if (beingHeldUp == true && isMergingLane == false)
-            {
-                tryToOvertake();
+                speed = speed + 2;
             }
             count = 0;
         }
-        else if (count < 15)
+        else if (count < 6)
         {
             count++;
+        }
+        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false)
+        {
+            tryToMoveInwards();
+        }
+        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false)
+        {
+            tryToOvertake();
         }
         transform.Translate(userDirection * speed * Time.deltaTime);
         int currentIndex = lane.IndexOf(thisCar);
@@ -60,11 +69,26 @@ public class BoyRacer : SimpleCar
             if (isMergingLane == true)
             {
                 GameObject carBehind = (GameObject)lane[currentIndex + 1];
-                if (thisCar.transform.position.x <= carBehind.transform.position.x)
+                if (directionShifting == "left")
                 {
-                    isMergingLane = false;
-                    holdingSomeoneUp = false;
-                    userDirection = Vector3.forward;
+                    if (thisCar.transform.position.x <= carBehind.transform.position.x)
+                    {
+                        isMergingLane = false;
+                        holdingSomeoneUp = false;
+                        userDirection = Vector3.forward;
+                        beingHeldUp = false;
+                        speed = laneSpeed - 10;
+                    }
+                }
+                else
+                {
+                    if (thisCar.transform.position.x >= carBehind.transform.position.x)
+                    {
+                        isMergingLane = false;
+                        holdingSomeoneUp = false;
+                        userDirection = Vector3.forward;
+                        beingHeldUp = false;
+                    }
                 }
             }
         }
@@ -72,25 +96,42 @@ public class BoyRacer : SimpleCar
         {
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
+            GameObject backCar = (GameObject)lane[lane.Count - 1];
             if (isMergingLane == true)
             {
-                if (thisCar.transform.position.x <= carInfront.transform.position.x)
+                if (directionShifting == "left")
                 {
-                    isMergingLane = false;
-                    holdingSomeoneUp = false;
-                    userDirection = Vector3.forward;
+                    if (thisCar.transform.position.x <= backCar.transform.position.x)
+                    {
+                        isMergingLane = false;
+                        holdingSomeoneUp = false;
+                        userDirection = Vector3.forward;
+                        beingHeldUp = false;
+                        speed = laneSpeed - 10;
+                    }
                 }
+                else
+                {
+                    if (thisCar.transform.position.x >= backCar.transform.position.x)
+                    {
+                        isMergingLane = false;
+                        holdingSomeoneUp = false;
+                        userDirection = Vector3.forward;
+                        beingHeldUp = false;
+                    }
+                }
+                
             }
             float distanceDifference = 0;
 
             distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
-            if (distanceDifference <= 8)
+            if (distanceDifference <= 14)
             {
                 //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed;
                 beingHeldUp = true;
             }
-            if (distanceDifference <= 15)
+            if (distanceDifference <= 16)
             {
                 carInfrontAttributes.holdingSomeoneUp = true;
             }
@@ -106,29 +147,6 @@ public class BoyRacer : SimpleCar
         }
     }
 
-    private void whichLaneStart()
-    {
-        //print("Lane 1 count: " + Lane1.Count + "Lane 2 count: " + Lane2.Count + "Lane 3 count:" + Lane3.Count);
-        if (Lane1.Contains(thisCar))
-        {
-            //print("Found in lane 1");
-            lane = Lane1;
-            return;
-        }
-        if (Lane2.Contains(thisCar))
-        {
-            //print("Found in lane 2");
-            lane = Lane2;
-            return;
-        }
-        if (Lane3.Contains(thisCar))
-        {
-            //print("Found in lane 3");
-            lane = Lane3;
-            return;
-        }
-        print("Wasn't found in any lane");
-        return;
-    }
+
 
 }

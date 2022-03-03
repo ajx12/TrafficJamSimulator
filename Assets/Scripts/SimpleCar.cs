@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class SimpleCar : MonoBehaviour
 {
-    public int speed = 60;
+    public float speed = 60;
     public Vector3 userDirection = Vector3.forward;
 
     public bool holdingSomeoneUp = false; //if set to true, try to move to another lane to let the person behind you through
@@ -15,10 +15,17 @@ public abstract class SimpleCar : MonoBehaviour
 
     public bool unableToShift = false; //there is another car obstructing the lane in the desired direction
 
+    protected string directionShifting = "";
+
+    protected bool ShiftOnCooldown = false;
+    protected int currentShiftCooldown = 0;
+
     public ArrayList lane;
+    protected float laneSpeed;
     protected ArrayList Lane1;
     protected ArrayList Lane2;
     protected ArrayList Lane3;
+    protected ArrayList desiredLane;
     protected GameObject thisCar;
     // Start is called before the first frame update
     void Start()
@@ -35,44 +42,50 @@ public abstract class SimpleCar : MonoBehaviour
 
     protected void tryToMoveInwards()
     {
-        ArrayList prevLane = new ArrayList();
+        desiredLane = new ArrayList();
+        float newSpeedIfSuccessful = 0;
         if (lane == Lane1)
         {
             unableToShift = true;
         }
         if (lane == Lane2)
         {
-            prevLane = Lane1;
+            desiredLane = Lane1;
+            newSpeedIfSuccessful = mainSpawner.maxSpeedL1;
         }
         if (lane == Lane3)
         {
-            prevLane = Lane2;
+            desiredLane = Lane2;
+            newSpeedIfSuccessful = mainSpawner.maxSpeedL2;
         }
         if (lane == Lane2 || lane == Lane3)
         {
             float currentPos = thisCar.transform.position.z;
             float upperBound = currentPos + 10; //further in front of the car. (addition becuase cars are heading towards z point 500)
-            float lowerBound = currentPos - 12; // further behind of the car.
+            float lowerBound = currentPos - 15; // further behind of the car.
             bool exceptionFound = false;
-            for (int i = 0; i < prevLane.Count; i++)
+            for (int i = 0; i < desiredLane.Count; i++)
             {
-                GameObject x = (GameObject)prevLane[i];
+                GameObject x = (GameObject)desiredLane[i];
                 if (x.transform.position.z < upperBound && x.transform.position.z > lowerBound)
                 {
                     //we have found a car too close so do not attempt lane shift
                     exceptionFound = true;
                     print(thisCar + "   Can't shift lanes yet.");
-                    i = prevLane.Count; //end the for loop
+                    i = desiredLane.Count; //end the for loop
                 }
             }
             if (exceptionFound == false)
             {
+                ShiftOnCooldown = true;
                 userDirection = Vector3.forward + Vector3.left;
                 isMergingLane = true;
-                int indexToInsertAt = findindexForLaneInsertion(prevLane);
-                prevLane.Insert(indexToInsertAt, thisCar);
+                int indexToInsertAt = findindexForLaneInsertion(desiredLane, 0);
+                desiredLane.Insert(indexToInsertAt, thisCar);
                 lane.Remove(thisCar);
-                lane = prevLane;
+                lane = desiredLane;
+                laneSpeed = newSpeedIfSuccessful;
+                directionShifting = "left";
             }
             else
             {
@@ -82,7 +95,7 @@ public abstract class SimpleCar : MonoBehaviour
 
     }
 
-    private int findindexForLaneInsertion(ArrayList otherLane)
+    private int findindexForLaneInsertion(ArrayList otherLane, int worstCase)
     {
         float currZ = thisCar.transform.position.z;
         for (int i = 0; i < otherLane.Count; i++)
@@ -93,20 +106,23 @@ public abstract class SimpleCar : MonoBehaviour
                 return i;
             }
         }
-        return -1;
+        return worstCase;
     }
 
 
     protected void tryToOvertake()
     {
-        ArrayList nextLane = new ArrayList();
+        desiredLane = new ArrayList();
+        float newSpeedIfSuccessful = 0;
         if (lane == Lane1)
         {
-            nextLane = Lane2;
+            desiredLane = Lane2;
+            newSpeedIfSuccessful = mainSpawner.maxSpeedL2;
         }
         if (lane == Lane2)
         {
-            nextLane = Lane3;
+            desiredLane = Lane3;
+            newSpeedIfSuccessful = mainSpawner.maxSpeedL3;
         }
         if (lane == Lane3)
         {
@@ -115,27 +131,32 @@ public abstract class SimpleCar : MonoBehaviour
         if (lane == Lane1 || lane == Lane2)
         {
             float currentPos = thisCar.transform.position.z;
-            float upperBound = currentPos + 10;
-            float lowerBound = currentPos - 12;
+            float upperBound = currentPos + 12; //further in front of the car. (addition becuase cars are heading towards z point 500)
+            float lowerBound = currentPos - 25; // further behind of the car.
             bool exceptionFound = false;
-            for (int i = 0; i < nextLane.Count; i++)
+            for (int i = 0; i < desiredLane.Count; i++)
             {
-                GameObject x = (GameObject)nextLane[i];
-                if(x.transform.position.z < upperBound && x.transform.position.z > lowerBound)
+                GameObject x = (GameObject)desiredLane[i];
+                if (x.transform.position.z < upperBound && x.transform.position.z > lowerBound)
                 {
+                    //we have found a car too close so do not attempt lane shift
                     exceptionFound = true;
-                    print(thisCar + " can't shift lanes yet.");
-                    i = nextLane.Count;
+                    print(thisCar + "   Can't shift lanes yet.");
+                    i = desiredLane.Count; //end the for loop
                 }
             }
             if (exceptionFound == false)
             {
+                ShiftOnCooldown = true;
                 userDirection = Vector3.forward + Vector3.right;
                 isMergingLane = true;
-                int indexToInsertAt = findindexForLaneInsertion(nextLane);
-                nextLane.Insert(indexToInsertAt, thisCar);
+                int indexToInsertAt = findindexForLaneInsertion(desiredLane, 1);
+                desiredLane.Insert(indexToInsertAt, thisCar);
                 lane.Remove(thisCar);
-                lane = nextLane;
+                lane = desiredLane;
+                laneSpeed = newSpeedIfSuccessful;
+                speed = speed + 10;
+                directionShifting = "right";
             }
             else
             {
@@ -143,6 +164,37 @@ public abstract class SimpleCar : MonoBehaviour
             }
         }
 
+    }
+
+    protected void whichLaneStart()
+    {
+        //print("Lane 1 count: " + Lane1.Count + "Lane 2 count: " + Lane2.Count + "Lane 3 count:" + Lane3.Count);
+        if (Lane1.Contains(thisCar))
+        {
+            //print("Found in lane 1");
+            lane = Lane1;
+            laneSpeed = mainSpawner.maxSpeedL1;
+            speed = laneSpeed - 5;
+            return;
+        }
+        if (Lane2.Contains(thisCar))
+        {
+            //print("Found in lane 2");
+            lane = Lane2;
+            laneSpeed = mainSpawner.maxSpeedL2;
+            speed = laneSpeed - 15;
+            return;
+        }
+        if (Lane3.Contains(thisCar))
+        {
+            //print("Found in lane 3");
+            lane = Lane3;
+            laneSpeed = mainSpawner.maxSpeedL3;
+            speed = laneSpeed - 20;
+            return;
+        }
+        print("Wasn't found in any lane");
+        return;
     }
 
 

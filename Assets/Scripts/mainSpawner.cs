@@ -8,6 +8,9 @@ public class mainSpawner : MonoBehaviour
     [SerializeField]  GameObject Lane2;
     [SerializeField]  GameObject Lane3;
     public static GameObject L1;
+    public static float maxSpeedL1 = 30;
+    public static float maxSpeedL2 = 40;
+    public static float maxSpeedL3 = 55;
     public static GameObject L2;
     public static GameObject L3;
     public static ArrayList L1List = new ArrayList();

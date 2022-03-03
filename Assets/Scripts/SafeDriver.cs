@@ -11,7 +11,6 @@ public class SafeDriver : SimpleCar
     void Start()
     {
         thisCar = this.gameObject;
-        this.speed = 60;
         Lane1 = mainSpawner.L1List;
         Lane2 = mainSpawner.L2List;
         Lane3 = mainSpawner.L3List;
@@ -29,23 +28,37 @@ public class SafeDriver : SimpleCar
     }
 
     int count = 0;
+    int cooldown = 0;
     public override void moveTheCar()
     {
-        if (count == 15)
+        if (ShiftOnCooldown == true)
         {
-            if (speed < 66)
+            cooldown++;
+            if (cooldown == 75)
             {
-                speed++;
+                ShiftOnCooldown = false;
+                cooldown = 0;
             }
-            if (holdingSomeoneUp == true && isMergingLane == false)
+        }
+        if (count >= 8)
+        {
+            if (speed < laneSpeed + 6)
             {
-                tryToMoveInwards();
+                speed = speed + 2;
             }
             count = 0;
         }
-        else if (count < 15)
+        else if (count < 8)
         {
             count++;
+        }
+        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false)
+        {
+            tryToMoveInwards();
+        }
+        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && holdingSomeoneUp == false)
+        {
+            tryToOvertake();
         }
         transform.Translate(userDirection * speed * Time.deltaTime);
         int currentIndex = lane.IndexOf(thisCar);
@@ -55,11 +68,26 @@ public class SafeDriver : SimpleCar
             if (isMergingLane == true)
             {
                 GameObject carBehind = (GameObject)lane[currentIndex + 1];
-                if (thisCar.transform.position.x <= carBehind.transform.position.x)
+                if (directionShifting == "left")
                 {
-                    isMergingLane = false;
-                    holdingSomeoneUp = false;
-                    userDirection = Vector3.forward;
+                    if (thisCar.transform.position.x <= carBehind.transform.position.x)
+                    {
+                        isMergingLane = false;
+                        holdingSomeoneUp = false;
+                        userDirection = Vector3.forward;
+                        beingHeldUp = false;
+                        speed = laneSpeed - 10;
+                    }
+                }
+                else
+                {
+                    if (thisCar.transform.position.x >= carBehind.transform.position.x)
+                    {
+                        isMergingLane = false;
+                        holdingSomeoneUp = false;
+                        userDirection = Vector3.forward;
+                        beingHeldUp = false;
+                    }
                 }
             }
         }
@@ -67,32 +95,50 @@ public class SafeDriver : SimpleCar
         {
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
+            GameObject backCar = (GameObject)lane[lane.Count - 1];
             if (isMergingLane == true)
             {
-                GameObject carBehind = (GameObject)lane[currentIndex + 1];
-                if (thisCar.transform.position.x <= carInfront.transform.position.x)
+                if (directionShifting == "left")
                 {
-                    isMergingLane = false;
-                    holdingSomeoneUp = false;
-                    userDirection = Vector3.forward;
+                    if (thisCar.transform.position.x <= backCar.transform.position.x)
+                    {
+                        isMergingLane = false;
+                        holdingSomeoneUp = false;
+                        userDirection = Vector3.forward;
+                        beingHeldUp = false;
+                        speed = laneSpeed - 10;
+                    }
                 }
+                else
+                {
+                    if (thisCar.transform.position.x >= backCar.transform.position.x)
+                    {
+                        isMergingLane = false;
+                        holdingSomeoneUp = false;
+                        userDirection = Vector3.forward;
+                        beingHeldUp = false;
+                    }
+                }
+
             }
             float distanceDifference = 0;
 
             distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
-            if (distanceDifference <= 8)
+            if (distanceDifference <= 14)
             {
                 //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed;
                 beingHeldUp = true;
             }
-            if (distanceDifference <= 15)
+            if (distanceDifference <= 16)
             {
                 carInfrontAttributes.holdingSomeoneUp = true;
             }
         }
 
 
+
+        //once the car reaches the end of the road:
         if (transform.position.z > 500)
         {
             lane.RemoveAt(currentIndex);
@@ -100,30 +146,6 @@ public class SafeDriver : SimpleCar
         }
     }
 
-    private void whichLaneStart()
-    {
-        //print("Lane 1 count: " + Lane1.Count + "Lane 2 count: " + Lane2.Count + "Lane 3 count:" + Lane3.Count);
-        if (Lane1.Contains(thisCar))
-        {
-            //print("Found in lane 1");
-            lane = Lane1;
-            return;
-        }
-        if (Lane2.Contains(thisCar))
-        {
-            //print("Found in lane 2");
-            lane = Lane2;
-            return;
-        }
-        if (Lane3.Contains(thisCar))
-        {
-            //print("Found in lane 3");
-            lane = Lane3;
-            return;
-        }
-        //print("Wasn't found in any lane");
-        return;
-    }
 
 
 }

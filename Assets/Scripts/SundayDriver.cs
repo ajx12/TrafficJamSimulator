@@ -11,7 +11,6 @@ public class SundayDriver : SimpleCar
     void Start()
     {
         thisCar = this.gameObject;
-        this.speed = 50;
         Lane1 = mainSpawner.L1List;
         Lane2 = mainSpawner.L2List;
         Lane3 = mainSpawner.L3List;
@@ -29,23 +28,33 @@ public class SundayDriver : SimpleCar
     }
 
     int count = 0;
+    int cooldown = 0;
     public override void moveTheCar()
     {
-        if (count == 15)
+        if (ShiftOnCooldown == true)
         {
-            if(speed < 60)
+            cooldown++;
+            if (cooldown == 75)
+            {
+                ShiftOnCooldown = false;
+                cooldown = 0;
+            }
+        }
+        if (count >= 15)
+        {
+            if(speed < laneSpeed - 5)
             {
                 speed++;
-            }
-            if (holdingSomeoneUp == true && isMergingLane == false)
-            {
-                tryToMoveInwards();
             }
             count = 0;
         }
         else if (count < 15)
         {
             count++;
+        }
+        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false)
+        {
+            tryToMoveInwards();
         }
         transform.Translate(userDirection * speed * Time.deltaTime);
         int currentIndex = lane.IndexOf(thisCar);
@@ -60,6 +69,7 @@ public class SundayDriver : SimpleCar
                     isMergingLane = false;
                     holdingSomeoneUp = false;
                     userDirection = Vector3.forward;
+                    speed = laneSpeed - 10;
                 }
             }
         }
@@ -74,18 +84,19 @@ public class SundayDriver : SimpleCar
                     isMergingLane = false;
                     holdingSomeoneUp = false;
                     userDirection = Vector3.forward;
+                    speed = laneSpeed - 10;
                 }
             }
             float distanceDifference = 0;
 
             distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
-            if (distanceDifference <= 8)
+            if (distanceDifference <= 15)
             {
                 //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed;
                 beingHeldUp = true;
             }
-            if (distanceDifference <= 15)
+            if (distanceDifference <= 16)
             {
                 carInfrontAttributes.holdingSomeoneUp = true;
             }
@@ -99,29 +110,6 @@ public class SundayDriver : SimpleCar
     }
 
 
-    private void whichLaneStart()
-    {
-        //print("Lane 1 count: " + Lane1.Count + "Lane 2 count: " + Lane2.Count + "Lane 3 count:" + Lane3.Count);
-        if (Lane1.Contains(thisCar))
-        {
-            //print("Found in lane 1");
-            lane = Lane1;
-            return;
-        }
-        if (Lane2.Contains(thisCar))
-        {
-            //print("Found in lane 2");
-            lane = Lane2;
-            return;
-        }
-        if (Lane3.Contains(thisCar))
-        {
-            //print("Found in lane 3");
-            lane = Lane3;
-            return;
-        }
-        //print("Wasn't found in any lane");
-        return;
-    }
+
 
 }
