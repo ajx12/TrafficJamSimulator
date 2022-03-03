@@ -83,6 +83,10 @@ public class SundayDriver : SimpleCar
             {
                 //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed;
+                beingHeldUp = true;
+            }
+            if (distanceDifference <= 15)
+            {
                 carInfrontAttributes.holdingSomeoneUp = true;
             }
         }

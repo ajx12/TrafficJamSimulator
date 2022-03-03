@@ -6,10 +6,15 @@ public abstract class SimpleCar : MonoBehaviour
 {
     public int speed = 60;
     public Vector3 userDirection = Vector3.forward;
+
     public bool holdingSomeoneUp = false; //if set to true, try to move to another lane to let the person behind you through
+
     public bool beingHeldUp = false; //if set to true, this car is being held up, will try to move lanes.
+
     public bool isMergingLane = false; //a bool to check if a car is merging lane 
+
     public bool unableToShift = false; //there is another car obstructing the lane in the desired direction
+
     public ArrayList lane;
     protected ArrayList Lane1;
     protected ArrayList Lane2;
@@ -92,6 +97,55 @@ public abstract class SimpleCar : MonoBehaviour
     }
 
 
+    protected void tryToOvertake()
+    {
+        ArrayList nextLane = new ArrayList();
+        if (lane == Lane1)
+        {
+            nextLane = Lane2;
+        }
+        if (lane == Lane2)
+        {
+            nextLane = Lane3;
+        }
+        if (lane == Lane3)
+        {
+            unableToShift = true;
+        }
+        if (lane == Lane1 || lane == Lane2)
+        {
+            float currentPos = thisCar.transform.position.z;
+            float upperBound = currentPos + 10;
+            float lowerBound = currentPos - 12;
+            bool exceptionFound = false;
+            for (int i = 0; i < nextLane.Count; i++)
+            {
+                GameObject x = (GameObject)nextLane[i];
+                if(x.transform.position.z < upperBound && x.transform.position.z > lowerBound)
+                {
+                    exceptionFound = true;
+                    print(thisCar + " can't shift lanes yet.");
+                    i = nextLane.Count;
+                }
+            }
+            if (exceptionFound == false)
+            {
+                userDirection = Vector3.forward + Vector3.right;
+                isMergingLane = true;
+                int indexToInsertAt = findindexForLaneInsertion(nextLane);
+                nextLane.Insert(indexToInsertAt, thisCar);
+                lane.Remove(thisCar);
+                lane = nextLane;
+            }
+            else
+            {
+                unableToShift = true;
+            }
+        }
+
+    }
+
 
     public abstract void moveTheCar();
+
 }

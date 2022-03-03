@@ -42,6 +42,10 @@ public class BoyRacer : SimpleCar
             {
                 tryToMoveInwards();
             }
+            if (beingHeldUp == true && isMergingLane == false)
+            {
+                tryToOvertake();
+            }
             count = 0;
         }
         else if (count < 15)
@@ -84,6 +88,10 @@ public class BoyRacer : SimpleCar
             {
                 //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed;
+                beingHeldUp = true;
+            }
+            if (distanceDifference <= 15)
+            {
                 carInfrontAttributes.holdingSomeoneUp = true;
             }
         }
