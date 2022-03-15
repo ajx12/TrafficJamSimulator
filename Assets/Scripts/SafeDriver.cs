@@ -31,6 +31,8 @@ public class SafeDriver : SimpleCar
     int cooldown = 0;
     public override void moveTheCar()
     {
+        int currentIndex = lane.IndexOf(thisCar);
+        int distanceFromStart = lane.Count - currentIndex;
         if (ShiftOnCooldown == true)
         {
             cooldown++;
@@ -42,7 +44,7 @@ public class SafeDriver : SimpleCar
         }
         if (count >= 8)
         {
-            if (speed < laneSpeed + 6)
+            if (speed < laneSpeed + 6 && beingHeldUp == false)
             {
                 speed = speed + 2;
             }
@@ -52,26 +54,26 @@ public class SafeDriver : SimpleCar
         {
             count++;
         }
-        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false)
+        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
         {
             tryToMoveInwards();
         }
-        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && holdingSomeoneUp == false)
+        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
         {
             tryToOvertake();
         }
         transform.Translate(userDirection * speed * Time.deltaTime);
-        int currentIndex = lane.IndexOf(thisCar);
+        currentIndex = lane.IndexOf(thisCar);
         // z pos needs to be at most 10 away from the car in front.
         if (currentIndex == 0)
         {
             if (isMergingLane == true)
             {
-                GameObject carBehind = (GameObject)lane[currentIndex + 1];
                 if (directionShifting == "left")
                 {
-                    if (thisCar.transform.position.x <= carBehind.transform.position.x)
+                    if (thisCar.transform.position.x <= currLaneX)
                     {
+                        speed = laneSpeed;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
@@ -81,8 +83,9 @@ public class SafeDriver : SimpleCar
                 }
                 else
                 {
-                    if (thisCar.transform.position.x >= carBehind.transform.position.x)
+                    if (thisCar.transform.position.x >= currLaneX)
                     {
+                        speed = laneSpeed;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
@@ -93,15 +96,13 @@ public class SafeDriver : SimpleCar
         }
         if (currentIndex > 0)
         {
-            GameObject carInfront = (GameObject)lane[currentIndex - 1];
-            SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
-            GameObject backCar = (GameObject)lane[lane.Count - 1];
             if (isMergingLane == true)
             {
                 if (directionShifting == "left")
                 {
-                    if (thisCar.transform.position.x <= backCar.transform.position.x)
+                    if (thisCar.transform.position.x <= currLaneX)
                     {
+                        speed = laneSpeed;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
@@ -111,8 +112,9 @@ public class SafeDriver : SimpleCar
                 }
                 else
                 {
-                    if (thisCar.transform.position.x >= backCar.transform.position.x)
+                    if (thisCar.transform.position.x >= currLaneX)
                     {
+                        speed = laneSpeed;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
@@ -121,7 +123,14 @@ public class SafeDriver : SimpleCar
                 }
 
             }
-            float distanceDifference = 0;
+            
+        }
+        currentIndex = lane.IndexOf(thisCar);
+        if (currentIndex > 0)
+        {
+            GameObject carInfront = (GameObject)lane[currentIndex - 1];
+            SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
+            float distanceDifference;
 
             distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
             if (distanceDifference <= 14)
@@ -137,9 +146,8 @@ public class SafeDriver : SimpleCar
         }
 
 
-
-        //once the car reaches the end of the road:
-        if (transform.position.z > 500)
+            //once the car reaches the end of the road:
+            if (transform.position.z > 500)
         {
             lane.RemoveAt(currentIndex);
             Destroy(thisCar);

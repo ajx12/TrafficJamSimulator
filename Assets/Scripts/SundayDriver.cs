@@ -42,7 +42,7 @@ public class SundayDriver : SimpleCar
         }
         if (count >= 15)
         {
-            if(speed < laneSpeed - 5)
+            if(speed < laneSpeed - 5 && beingHeldUp == false)
             {
                 speed++;
             }
@@ -63,9 +63,9 @@ public class SundayDriver : SimpleCar
         {
             if (isMergingLane == true)
             {
-                GameObject carBehind = (GameObject)lane[currentIndex + 1];
-                if (thisCar.transform.position.x <= carBehind.transform.position.x)
+                if (thisCar.transform.position.x <= currLaneX)
                 {
+                    speed = laneSpeed;
                     isMergingLane = false;
                     holdingSomeoneUp = false;
                     userDirection = Vector3.forward;
@@ -79,8 +79,9 @@ public class SundayDriver : SimpleCar
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
             if (isMergingLane == true)
             {
-                if (thisCar.transform.position.x <= carInfront.transform.position.x)
+                if (thisCar.transform.position.x <= currLaneX)
                 {
+                    speed = laneSpeed;
                     isMergingLane = false;
                     holdingSomeoneUp = false;
                     userDirection = Vector3.forward;

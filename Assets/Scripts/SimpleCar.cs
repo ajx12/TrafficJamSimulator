@@ -21,6 +21,7 @@ public abstract class SimpleCar : MonoBehaviour
     protected int currentShiftCooldown = 0;
 
     public ArrayList lane;
+    protected double currLaneX;
     protected float laneSpeed;
     protected ArrayList Lane1;
     protected ArrayList Lane2;
@@ -44,6 +45,7 @@ public abstract class SimpleCar : MonoBehaviour
     {
         desiredLane = new ArrayList();
         float newSpeedIfSuccessful = 0;
+        double newLaneX = 0;
         if (lane == Lane1)
         {
             unableToShift = true;
@@ -52,16 +54,18 @@ public abstract class SimpleCar : MonoBehaviour
         {
             desiredLane = Lane1;
             newSpeedIfSuccessful = mainSpawner.maxSpeedL1;
+            newLaneX = mainSpawner.L1X;
         }
         if (lane == Lane3)
         {
             desiredLane = Lane2;
             newSpeedIfSuccessful = mainSpawner.maxSpeedL2;
+            newLaneX = mainSpawner.L2X;
         }
         if (lane == Lane2 || lane == Lane3)
         {
             float currentPos = thisCar.transform.position.z;
-            float upperBound = currentPos + 10; //further in front of the car. (addition becuase cars are heading towards z point 500)
+            float upperBound = currentPos + 18; //further in front of the car. (addition becuase cars are heading towards z point 500)
             float lowerBound = currentPos - 15; // further behind of the car.
             bool exceptionFound = false;
             for (int i = 0; i < desiredLane.Count; i++)
@@ -80,12 +84,13 @@ public abstract class SimpleCar : MonoBehaviour
                 ShiftOnCooldown = true;
                 userDirection = Vector3.forward + Vector3.left;
                 isMergingLane = true;
-                int indexToInsertAt = findindexForLaneInsertion(desiredLane, 0);
+                int indexToInsertAt = findindexForLaneInsertion(desiredLane);
                 desiredLane.Insert(indexToInsertAt, thisCar);
                 lane.Remove(thisCar);
                 lane = desiredLane;
                 laneSpeed = newSpeedIfSuccessful;
                 directionShifting = "left";
+                currLaneX = newLaneX;
             }
             else
             {
@@ -95,7 +100,7 @@ public abstract class SimpleCar : MonoBehaviour
 
     }
 
-    private int findindexForLaneInsertion(ArrayList otherLane, int worstCase)
+    private int findindexForLaneInsertion(ArrayList otherLane)
     {
         float currZ = thisCar.transform.position.z;
         for (int i = 0; i < otherLane.Count; i++)
@@ -106,7 +111,7 @@ public abstract class SimpleCar : MonoBehaviour
                 return i;
             }
         }
-        return worstCase;
+        return 0;
     }
 
 
@@ -114,15 +119,18 @@ public abstract class SimpleCar : MonoBehaviour
     {
         desiredLane = new ArrayList();
         float newSpeedIfSuccessful = 0;
+        double newLaneX = 0;
         if (lane == Lane1)
         {
             desiredLane = Lane2;
             newSpeedIfSuccessful = mainSpawner.maxSpeedL2;
+            newLaneX = mainSpawner.L2X;
         }
         if (lane == Lane2)
         {
             desiredLane = Lane3;
             newSpeedIfSuccessful = mainSpawner.maxSpeedL3;
+            newLaneX = mainSpawner.L3X;
         }
         if (lane == Lane3)
         {
@@ -132,7 +140,7 @@ public abstract class SimpleCar : MonoBehaviour
         {
             float currentPos = thisCar.transform.position.z;
             float upperBound = currentPos + 12; //further in front of the car. (addition becuase cars are heading towards z point 500)
-            float lowerBound = currentPos - 25; // further behind of the car.
+            float lowerBound = currentPos - 30; // further behind of the car.
             bool exceptionFound = false;
             for (int i = 0; i < desiredLane.Count; i++)
             {
@@ -150,13 +158,14 @@ public abstract class SimpleCar : MonoBehaviour
                 ShiftOnCooldown = true;
                 userDirection = Vector3.forward + Vector3.right;
                 isMergingLane = true;
-                int indexToInsertAt = findindexForLaneInsertion(desiredLane, 1);
+                int indexToInsertAt = findindexForLaneInsertion(desiredLane);
                 desiredLane.Insert(indexToInsertAt, thisCar);
                 lane.Remove(thisCar);
                 lane = desiredLane;
+                speed = speed + 5;
                 laneSpeed = newSpeedIfSuccessful;
-                speed = speed + 10;
                 directionShifting = "right";
+                currLaneX = newLaneX;
             }
             else
             {
@@ -175,6 +184,7 @@ public abstract class SimpleCar : MonoBehaviour
             lane = Lane1;
             laneSpeed = mainSpawner.maxSpeedL1;
             speed = laneSpeed - 5;
+            currLaneX = mainSpawner.L1X;
             return;
         }
         if (Lane2.Contains(thisCar))
@@ -183,6 +193,7 @@ public abstract class SimpleCar : MonoBehaviour
             lane = Lane2;
             laneSpeed = mainSpawner.maxSpeedL2;
             speed = laneSpeed - 15;
+            currLaneX = mainSpawner.L2X;
             return;
         }
         if (Lane3.Contains(thisCar))
@@ -191,6 +202,7 @@ public abstract class SimpleCar : MonoBehaviour
             lane = Lane3;
             laneSpeed = mainSpawner.maxSpeedL3;
             speed = laneSpeed - 20;
+            currLaneX = mainSpawner.L3X;
             return;
         }
         print("Wasn't found in any lane");

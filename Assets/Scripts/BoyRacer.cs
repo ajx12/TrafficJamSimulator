@@ -32,6 +32,8 @@ public class BoyRacer : SimpleCar
     int cooldown = 0;
     public override void moveTheCar()
     {
+        int currentIndex = lane.IndexOf(thisCar);
+        int distanceFromStart = lane.Count - currentIndex;
         if (ShiftOnCooldown == true)
         {
             cooldown++;
@@ -43,7 +45,7 @@ public class BoyRacer : SimpleCar
         }
         if (count >= 6)
         {
-            if (speed < laneSpeed + 10)
+            if (speed < laneSpeed + 10 && beingHeldUp == false)
             {
                 speed = speed + 2;
             }
@@ -57,22 +59,22 @@ public class BoyRacer : SimpleCar
         {
             tryToMoveInwards();
         }
-        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false)
+        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
         {
             tryToOvertake();
         }
         transform.Translate(userDirection * speed * Time.deltaTime);
-        int currentIndex = lane.IndexOf(thisCar);
+        currentIndex = lane.IndexOf(thisCar);
         // z pos needs to be at most 10 away from the car in front.
         if (currentIndex == 0)
         {
             if (isMergingLane == true)
             {
-                GameObject carBehind = (GameObject)lane[currentIndex + 1];
                 if (directionShifting == "left")
                 {
-                    if (thisCar.transform.position.x <= carBehind.transform.position.x)
+                    if (thisCar.transform.position.x <= currLaneX)
                     {
+                        speed = laneSpeed;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
@@ -82,8 +84,9 @@ public class BoyRacer : SimpleCar
                 }
                 else
                 {
-                    if (thisCar.transform.position.x >= carBehind.transform.position.x)
+                    if (thisCar.transform.position.x >= currLaneX)
                     {
+                        speed = laneSpeed;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
@@ -96,13 +99,13 @@ public class BoyRacer : SimpleCar
         {
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
-            GameObject backCar = (GameObject)lane[lane.Count - 1];
             if (isMergingLane == true)
             {
                 if (directionShifting == "left")
                 {
-                    if (thisCar.transform.position.x <= backCar.transform.position.x)
+                    if (thisCar.transform.position.x <= currLaneX)
                     {
+                        speed = laneSpeed;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
@@ -112,15 +115,16 @@ public class BoyRacer : SimpleCar
                 }
                 else
                 {
-                    if (thisCar.transform.position.x >= backCar.transform.position.x)
+                    if (thisCar.transform.position.x >= currLaneX)
                     {
+                        speed = laneSpeed;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
                         beingHeldUp = false;
                     }
                 }
-                
+
             }
             float distanceDifference = 0;
 
