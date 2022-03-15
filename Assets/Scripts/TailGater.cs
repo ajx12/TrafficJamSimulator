@@ -7,6 +7,7 @@ public class TailGater : SimpleCar
     //Red Car
     
     bool activated = false;
+    int targetLane;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,6 +17,7 @@ public class TailGater : SimpleCar
         Lane3 = mainSpawner.L3List;
         whichLaneStart();
         activated = true;
+        targetLane = Random.Range(2, 4); //targets either the middle lane or the outer lane
     }
 
     // Update is called once per frame
@@ -33,11 +35,11 @@ public class TailGater : SimpleCar
     public override void moveTheCar()
     {
         int currentIndex = lane.IndexOf(thisCar);
-        int distanceFromStart = lane.Count - currentIndex;
+        int distanceFromStart = lane.Count - currentIndex; //we allow shifting of lanes once the car is 5 cars from the start
         if (ShiftOnCooldown == true)
         {
             cooldown++;
-            if (cooldown == 75)
+            if (cooldown == 200)
             {
                 ShiftOnCooldown = false;
                 cooldown = 0;

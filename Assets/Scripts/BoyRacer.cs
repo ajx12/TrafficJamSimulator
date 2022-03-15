@@ -6,7 +6,7 @@ public class BoyRacer : SimpleCar
 {
     //Orange car
     bool activated = false;
-
+    int targetLane = 3;
     // Start is called before the first frame update
     void Start()
     {
@@ -37,7 +37,7 @@ public class BoyRacer : SimpleCar
         if (ShiftOnCooldown == true)
         {
             cooldown++;
-            if (cooldown == 75)
+            if (cooldown == 200)
             {
                 ShiftOnCooldown = false;
                 cooldown = 0;

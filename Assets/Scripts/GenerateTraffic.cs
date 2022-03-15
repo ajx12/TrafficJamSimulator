@@ -41,7 +41,7 @@ public class GenerateTraffic : MonoBehaviour
         {
             theLane = Lane1;
             brChance = 1; // boy racer chance
-            safeChance = 9; // safe driver chance
+            safeChance = 15; // safe driver chance
             sunChance = 19; //sunday driver chance
             tgChance = 20; //tail gater chance
             lowerChance = 25;
@@ -61,7 +61,7 @@ public class GenerateTraffic : MonoBehaviour
         {
             theLane = Lane3;
             brChance = 10; // boy racer chance
-            safeChance = 0; // safe driver chance
+            safeChance = 11; // safe driver chance
             sunChance = 0; //sunday driver chance
             tgChance = 20; //tail gater chance
             lowerChance = 35;
@@ -76,7 +76,7 @@ public class GenerateTraffic : MonoBehaviour
         if (count > nextSpawn)
         {
             count = 0;
-            nextSpawn = Random.Range(lowerChance, upperChance);
+            nextSpawn = Random.Range(lowerChance, upperChance+1);
             int whichColour = Random.Range(1, 21); //random from 1 to 20
             if (brChance != 0)
             {

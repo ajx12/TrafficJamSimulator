@@ -7,6 +7,7 @@ public class SafeDriver : SimpleCar
 
     //Black Car
     bool activated = false;
+    int targetLane = 1;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +37,7 @@ public class SafeDriver : SimpleCar
         if (ShiftOnCooldown == true)
         {
             cooldown++;
-            if (cooldown == 75)
+            if (cooldown == 200)
             {
                 ShiftOnCooldown = false;
                 cooldown = 0;
