@@ -6,10 +6,11 @@ public class GenerateTraffic : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    int brChance; // boy racer chance (out of 20)
+    int brChance; // boy racer chance (out of 100)
     int safeChance; // safe driver chance
     int sunChance; //sunday driver chance
     int tgChance; //tail gater chance
+    
 
     [SerializeField] GameObject RedCar;
 
@@ -24,12 +25,13 @@ public class GenerateTraffic : MonoBehaviour
     public GameObject Lane3;
     public GameObject theLane;
 
-    int upperChance;
-    int lowerChance;
+    float upperChance;
+    float lowerChance;
+    double spawnerMultiplier;
 
     int count = 0;
 
-    int nextSpawn = 25;
+    double nextSpawn = 25;
 
 
     void Start()
@@ -37,35 +39,105 @@ public class GenerateTraffic : MonoBehaviour
         Lane1 = mainSpawner.L1;
         Lane2 = mainSpawner.L2;
         Lane3 = mainSpawner.L3;
+        setVariables();
+    }
+
+    void setVariables()
+    {
+        bool L1open = mainSpawner.L1open;
+        bool L2open = mainSpawner.L2open;
+        bool L3open = mainSpawner.L3open;
+        spawnerMultiplier = mainSpawner.sliderMultiplier;
         if (this.gameObject == Lane1)
         {
             theLane = Lane1;
-            brChance = 1; // boy racer chance
-            safeChance = 15; // safe driver chance
-            sunChance = 19; //sunday driver chance
-            tgChance = 20; //tail gater chance
-            lowerChance = 25;
-            upperChance = 35;
+            brChance = mainSpawner.ln1Br; // boy racer chance
+            safeChance = mainSpawner.ln1Safe; // safe driver chance
+            sunChance = mainSpawner.ln1Sun; //sunday driver chance
+            tgChance = mainSpawner.ln1Tg; //tail gater chance
+            if ((L1open == true) && (L2open == false || L3open == false))
+            {
+                if (L2open == false && spawnerMultiplier < 1.2){
+                    spawnerMultiplier = 1.2;
+                }
+                if (L3open == false)
+                {
+                    if (L2open == false)
+                    {
+                        spawnerMultiplier = 1.5;
+                    }
+                    else
+                    {
+                        if (spawnerMultiplier < 1.2)
+                        {
+                            spawnerMultiplier = 1.2;
+                        }
+                    }
+                }
+            }
+
+
+            lowerChance = (float)(25 / spawnerMultiplier);
+            upperChance = (float)(35 / spawnerMultiplier);
+            print("lane1 is low then up: " + lowerChance + " " + upperChance);
         }
         if (this.gameObject == Lane2)
         {
             theLane = Lane2;
-            brChance = 8; // boy racer chance
-            safeChance = 12; // safe driver chance
-            sunChance = 14; //sunday driver chance
-            tgChance = 20; //tail gater chance
-            lowerChance = 25;
-            upperChance = 45;
+            brChance = mainSpawner.ln2Br; // boy racer chance
+            safeChance = mainSpawner.ln2Safe; // safe driver chance
+            sunChance = mainSpawner.ln2Sun; //sunday driver chance
+            tgChance = mainSpawner.ln2Tg; //tail gater chance
+            if ((L2open == true) && (L1open == false || L3open == false))
+            {
+                if (L1open == false)
+                {
+                    spawnerMultiplier = 1.5;
+                }
+                if (L3open == false)
+                {
+                    if (L1open == false)
+                    {
+                        spawnerMultiplier = 3;
+                    }
+                    else
+                    {
+                        spawnerMultiplier = 1.5;
+                    }
+                }
+            }
+            lowerChance = (float)(25 / spawnerMultiplier);
+            upperChance = (float)(35 / spawnerMultiplier);
+            print("lane2 is low then up: " + lowerChance + " " + upperChance);
         }
         if (this.gameObject == Lane3)
         {
             theLane = Lane3;
-            brChance = 10; // boy racer chance
-            safeChance = 11; // safe driver chance
-            sunChance = 0; //sunday driver chance
-            tgChance = 20; //tail gater chance
-            lowerChance = 35;
-            upperChance = 55;
+            brChance = mainSpawner.ln3Br; // boy racer chance
+            safeChance = mainSpawner.ln3Safe; // safe driver chance
+            sunChance = mainSpawner.ln3Sun; //sunday driver chance
+            tgChance = mainSpawner.ln3Tg; //tail gater chance
+            if ((L3open == true) && (L1open == false || L2open == false))
+            {
+                if (L1open == false)
+                {
+                    spawnerMultiplier = 1.5;
+                }
+                if (L2open == false)
+                {
+                    if (L1open == false)
+                    {
+                        spawnerMultiplier = 3;
+                    }
+                    else
+                    {
+                        spawnerMultiplier = 1.5;
+                    }
+                }
+            }
+            lowerChance = (float)(35 / spawnerMultiplier);
+            upperChance = (float)(45 / spawnerMultiplier);
+            print("lane3 is low then up: " + lowerChance + " " + upperChance);
         }
     }
 
@@ -73,11 +145,12 @@ public class GenerateTraffic : MonoBehaviour
     void FixedUpdate()
     {
         count++;
-        if (count > nextSpawn)
+        if (count > nextSpawn && isLaneOpen() == true)
         {
+            setVariables();
             count = 0;
             nextSpawn = Random.Range(lowerChance, upperChance+1);
-            int whichColour = Random.Range(1, 21); //random from 1 to 20
+            int whichColour = Random.Range(1, 101); //random from 1 to 100
             if (brChance != 0)
             {
                 if (whichColour <= brChance)
@@ -135,4 +208,40 @@ public class GenerateTraffic : MonoBehaviour
         }
     }
 
+    bool isLaneOpen()
+    {
+        if (theLane == Lane1)
+        {
+            return mainSpawner.L1open;
+        }
+        if (theLane == Lane2)
+        {
+            return mainSpawner.L2open;
+        }
+        if (theLane == Lane3)
+        {
+            return mainSpawner.L3open;
+        }
+        return false;
+    }
+
+    bool isLaneOpen(GameObject thisLane)
+    {
+        if (thisLane == Lane1)
+        {
+            return mainSpawner.L1open;
+        }
+        if (thisLane == Lane2)
+        {
+            return mainSpawner.L2open;
+        }
+        if (thisLane == Lane3)
+        {
+            return mainSpawner.L3open;
+        }
+        return false;
+    }
+
 }
+
+   

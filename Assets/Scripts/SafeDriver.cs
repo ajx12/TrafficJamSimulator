@@ -37,10 +37,21 @@ public class SafeDriver : SimpleCar
         if (ShiftOnCooldown == true)
         {
             cooldown++;
-            if (cooldown == 200)
+            if (cooldown == 2000)
             {
                 ShiftOnCooldown = false;
                 cooldown = 0;
+                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
+                {
+                    if (currentLane < targetLane)
+                    {
+                        tryToOvertake();
+                    }
+                    if (currentLane > targetLane)
+                    {
+                        tryToMoveInwards();
+                    }
+                }
             }
         }
         if (count >= 8)
@@ -74,12 +85,11 @@ public class SafeDriver : SimpleCar
                 {
                     if (thisCar.transform.position.x <= currLaneX)
                     {
-                        speed = laneSpeed;
+                        speed = laneSpeed - 10;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
                         beingHeldUp = false;
-                        speed = laneSpeed - 10;
                     }
                 }
                 else
@@ -103,12 +113,11 @@ public class SafeDriver : SimpleCar
                 {
                     if (thisCar.transform.position.x <= currLaneX)
                     {
-                        speed = laneSpeed;
+                        speed = laneSpeed - 10;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
                         beingHeldUp = false;
-                        speed = laneSpeed - 10;
                     }
                 }
                 else
@@ -129,6 +138,7 @@ public class SafeDriver : SimpleCar
         currentIndex = lane.IndexOf(thisCar);
         if (currentIndex > 0)
         {
+            currentIndex = lane.IndexOf(thisCar);
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
             float distanceDifference;
@@ -149,10 +159,10 @@ public class SafeDriver : SimpleCar
 
             //once the car reaches the end of the road:
             if (transform.position.z > 500)
-        {
-            lane.RemoveAt(currentIndex);
-            Destroy(thisCar);
-        }
+            {
+                lane.RemoveAt(currentIndex);
+                Destroy(thisCar);
+            }
     }
 
 

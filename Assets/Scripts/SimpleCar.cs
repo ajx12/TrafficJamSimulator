@@ -7,6 +7,8 @@ public abstract class SimpleCar : MonoBehaviour
     public float speed = 60;
     public Vector3 userDirection = Vector3.forward;
 
+    protected int currentLane;
+
     public bool holdingSomeoneUp = false; //if set to true, try to move to another lane to let the person behind you through
 
     public bool beingHeldUp = false; //if set to true, this car is being held up, will try to move lanes.
@@ -43,6 +45,7 @@ public abstract class SimpleCar : MonoBehaviour
 
     protected void tryToMoveInwards()
     {
+        unableToShift = false;
         desiredLane = new ArrayList();
         float newSpeedIfSuccessful = 0;
         double newLaneX = 0;
@@ -62,7 +65,11 @@ public abstract class SimpleCar : MonoBehaviour
             newSpeedIfSuccessful = mainSpawner.maxSpeedL2;
             newLaneX = mainSpawner.L2X;
         }
-        if (lane == Lane2 || lane == Lane3)
+        if (isLaneOpen(desiredLane) == false)
+        {
+            unableToShift = true;
+        }
+        if (unableToShift == false && (lane == Lane2 || lane == Lane3))
         {
             float currentPos = thisCar.transform.position.z;
             float upperBound = currentPos + 18; //further in front of the car. (addition becuase cars are heading towards z point 500)
@@ -75,7 +82,6 @@ public abstract class SimpleCar : MonoBehaviour
                 {
                     //we have found a car too close so do not attempt lane shift
                     exceptionFound = true;
-                    print(thisCar + "   Can't shift lanes yet.");
                     i = desiredLane.Count; //end the for loop
                 }
             }
@@ -88,6 +94,7 @@ public abstract class SimpleCar : MonoBehaviour
                 desiredLane.Insert(indexToInsertAt, thisCar);
                 lane.Remove(thisCar);
                 lane = desiredLane;
+                currentLane--;
                 laneSpeed = newSpeedIfSuccessful;
                 directionShifting = "left";
                 currLaneX = newLaneX;
@@ -117,6 +124,7 @@ public abstract class SimpleCar : MonoBehaviour
 
     protected void tryToOvertake()
     {
+        unableToShift = false;
         desiredLane = new ArrayList();
         float newSpeedIfSuccessful = 0;
         double newLaneX = 0;
@@ -136,7 +144,11 @@ public abstract class SimpleCar : MonoBehaviour
         {
             unableToShift = true;
         }
-        if (lane == Lane1 || lane == Lane2)
+        if (isLaneOpen(desiredLane) == false)
+        {
+            unableToShift = true;
+        }
+        if (unableToShift == false && (lane == Lane1 || lane == Lane2))
         {
             float currentPos = thisCar.transform.position.z;
             float upperBound = currentPos + 12; //further in front of the car. (addition becuase cars are heading towards z point 500)
@@ -149,7 +161,6 @@ public abstract class SimpleCar : MonoBehaviour
                 {
                     //we have found a car too close so do not attempt lane shift
                     exceptionFound = true;
-                    print(thisCar + "   Can't shift lanes yet.");
                     i = desiredLane.Count; //end the for loop
                 }
             }
@@ -162,6 +173,7 @@ public abstract class SimpleCar : MonoBehaviour
                 desiredLane.Insert(indexToInsertAt, thisCar);
                 lane.Remove(thisCar);
                 lane = desiredLane;
+                currentLane++;
                 speed = speed + 5;
                 laneSpeed = newSpeedIfSuccessful;
                 directionShifting = "right";
@@ -182,6 +194,7 @@ public abstract class SimpleCar : MonoBehaviour
         {
             //print("Found in lane 1");
             lane = Lane1;
+            currentLane = 1;
             laneSpeed = mainSpawner.maxSpeedL1;
             speed = laneSpeed - 5;
             currLaneX = mainSpawner.L1X;
@@ -191,6 +204,7 @@ public abstract class SimpleCar : MonoBehaviour
         {
             //print("Found in lane 2");
             lane = Lane2;
+            currentLane = 2;
             laneSpeed = mainSpawner.maxSpeedL2;
             speed = laneSpeed - 15;
             currLaneX = mainSpawner.L2X;
@@ -200,13 +214,29 @@ public abstract class SimpleCar : MonoBehaviour
         {
             //print("Found in lane 3");
             lane = Lane3;
+            currentLane = 3;
             laneSpeed = mainSpawner.maxSpeedL3;
             speed = laneSpeed - 20;
             currLaneX = mainSpawner.L3X;
             return;
         }
-        print("Wasn't found in any lane");
         return;
+    }
+    bool isLaneOpen(ArrayList nextLane)
+    {
+        if (nextLane == Lane1)
+        {
+            return mainSpawner.L1open;
+        }
+        if (nextLane == Lane2)
+        {
+            return mainSpawner.L2open;
+        }
+        if (nextLane == Lane3)
+        {
+            return mainSpawner.L3open;
+        }
+        return false;
     }
 
 

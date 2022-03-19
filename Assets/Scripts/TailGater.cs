@@ -39,10 +39,21 @@ public class TailGater : SimpleCar
         if (ShiftOnCooldown == true)
         {
             cooldown++;
-            if (cooldown == 200)
+            if (cooldown == 2000)
             {
                 ShiftOnCooldown = false;
                 cooldown = 0;
+                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
+                {
+                    if (currentLane < targetLane)
+                    {
+                        tryToOvertake();
+                    }
+                    if (currentLane > targetLane)
+                    {
+                        tryToMoveInwards();
+                    }
+                }
             }
         }
         if (count >= 6)
@@ -76,12 +87,12 @@ public class TailGater : SimpleCar
                 {
                     if (thisCar.transform.position.x <= currLaneX)
                     {
-                        speed = laneSpeed;
+                        speed = laneSpeed - 10;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
                         beingHeldUp = false;
-                        speed = laneSpeed - 10;
+
                     }
                 }
                 else
@@ -99,6 +110,7 @@ public class TailGater : SimpleCar
         }
         if (currentIndex > 0)
         {
+            currentIndex = lane.IndexOf(thisCar);
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
             if (isMergingLane == true)
@@ -107,12 +119,11 @@ public class TailGater : SimpleCar
                 {
                     if (thisCar.transform.position.x <= currLaneX)
                     {
-                        speed = laneSpeed;
+                        speed = laneSpeed - 10;
                         isMergingLane = false;
                         holdingSomeoneUp = false;
                         userDirection = Vector3.forward;
                         beingHeldUp = false;
-                        speed = laneSpeed - 10;
                     }
                 }
                 else

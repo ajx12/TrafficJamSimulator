@@ -28,6 +28,7 @@ public class SundayDriver : SimpleCar
         }
     }
 
+
     int count = 0;
     int cooldown = 0;
     public override void moveTheCar()
@@ -35,10 +36,21 @@ public class SundayDriver : SimpleCar
         if (ShiftOnCooldown == true)
         {
             cooldown++;
-            if (cooldown == 200)
+            if (cooldown == 2000)
             {
                 ShiftOnCooldown = false;
-                cooldown = 0;
+               cooldown = 0;
+                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false)
+                {
+                    if (currentLane < targetLane)
+                    {
+                        tryToOvertake();
+                    }
+                    if (currentLane > targetLane)
+                    {
+                        tryToMoveInwards();
+                    }
+                }
             }
         }
         if (count >= 15)
@@ -66,27 +78,27 @@ public class SundayDriver : SimpleCar
             {
                 if (thisCar.transform.position.x <= currLaneX)
                 {
-                    speed = laneSpeed;
+                    speed = laneSpeed - 10;
                     isMergingLane = false;
                     holdingSomeoneUp = false;
                     userDirection = Vector3.forward;
-                    speed = laneSpeed - 10;
                 }
             }
         }
         if (currentIndex > 0)
         {
+            currentIndex = lane.IndexOf(thisCar);
             GameObject carInfront = (GameObject)lane[currentIndex - 1];
             SimpleCar carInfrontAttributes = carInfront.GetComponent<SimpleCar>();
             if (isMergingLane == true)
             {
                 if (thisCar.transform.position.x <= currLaneX)
                 {
-                    speed = laneSpeed;
+                    speed = laneSpeed - 10;
                     isMergingLane = false;
                     holdingSomeoneUp = false;
                     userDirection = Vector3.forward;
-                    speed = laneSpeed - 10;
+
                 }
             }
             float distanceDifference = 0;
