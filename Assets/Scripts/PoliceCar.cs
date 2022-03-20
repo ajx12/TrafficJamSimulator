@@ -5,8 +5,7 @@ using UnityEngine;
 public class PoliceCar : SafeDriver
 {
 
-    bool activated = false;
-    int targetLane = 1;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,17 +15,26 @@ public class PoliceCar : SafeDriver
         Lane3 = mainSpawner.L3List;
         whichLaneStart();
         activated = true;
+        ShiftOnCooldown = true;
     }
 
 
-    int count = 0;
-    int cooldown = 0;
+
     // Update is called once per frame
     void Update()
     {
         if (activated == true)
         {
+            mainSpawner.isPoliceCar = true;
             base.moveTheCar();
         }
+    }
+
+    public override void deleteTheCar(int currentIndex)
+    {
+        lane.RemoveAt(currentIndex);
+        Destroy(thisCar);
+        mainSpawner.isPoliceCar = false;
+        activated = false;
     }
 }

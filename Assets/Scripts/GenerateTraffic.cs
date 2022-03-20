@@ -81,8 +81,8 @@ public class GenerateTraffic : MonoBehaviour
             }
 
 
-            lowerChance = (float)(20 / spawnerMultiplier);
-            upperChance = (float)(35 / spawnerMultiplier);
+            lowerChance = (float)(35 / spawnerMultiplier);
+            upperChance = (float)(40 / spawnerMultiplier);
         }
         if (this.gameObject == Lane2)
         {
@@ -137,8 +137,8 @@ public class GenerateTraffic : MonoBehaviour
                     }
                 }
             }
-            lowerChance = (float)(25 / spawnerMultiplier);
-            upperChance = (float)(40 / spawnerMultiplier);
+            lowerChance = (float)(20 / spawnerMultiplier);
+            upperChance = (float)(35 / spawnerMultiplier);
         }
     }
 
@@ -157,6 +157,11 @@ public class GenerateTraffic : MonoBehaviour
                 addNewCarToLane(newCar);
                 mainSpawner.policeNeedSpawning = false;
                 mainSpawner.isPoliceCar = true;
+                return;
+            }
+            if (mainSpawner.ambulanceNeedSpawning == true && theLane != Lane1)
+            {
+                addingAmbulance();
                 return;
             }
             int whichColour = Random.Range(1, 101); //random from 1 to 100
@@ -200,6 +205,31 @@ public class GenerateTraffic : MonoBehaviour
         }
     }
 
+    void addingAmbulance()
+    {
+        if (theLane == Lane1)
+        {
+            //do Nothing
+        }
+        if (theLane == Lane2)
+        {
+            GameObject newCar = Instantiate(Ambulance, transform);
+            AmbulanceScript newAbulance = newCar.GetComponent<AmbulanceScript>();
+            newAbulance.target = mainSpawner.AmbulanceL1L2;
+            mainSpawner.isAmbulance1 = true;
+            mainSpawner.isAmbulance2 = true;
+            mainSpawner.ambulanceNeedSpawning = false;
+        }
+        if (theLane == Lane3)
+        {
+            GameObject newCar = Instantiate(Ambulance, transform);
+            AmbulanceScript newAbulance = newCar.GetComponent<AmbulanceScript>();
+            newAbulance.target = mainSpawner.AmbulanceL2L3;
+            mainSpawner.isAmbulance2 = true;
+            mainSpawner.isAmbulance3 = true;
+            mainSpawner.ambulanceNeedSpawning = false;
+        }
+    }
 
     void addNewCarToLane(GameObject car)
     {

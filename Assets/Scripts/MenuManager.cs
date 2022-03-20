@@ -55,6 +55,8 @@ public class MenuManager : MonoBehaviour
         ApplyButton.onClick.AddListener(ApplySettings);
         Button SpwnPol = SpawnPoliceCarBtn.GetComponent<Button>(); //Spawns a Police Car
         SpwnPol.onClick.AddListener(SpawnPoliceCar);
+        Button SpwnAmb = SpawnAmbulanceBtn.GetComponent<Button>();
+        SpwnAmb.onClick.AddListener(SpawnAmbulance);
         Button CloseSettingsButton = CloseSettingsBtn.GetComponent<Button>();
         CloseSettingsButton.onClick.AddListener(CloseSettings);
         BrChanceL1 = BrTBLn1.GetComponent<TMP_InputField>();
@@ -155,7 +157,14 @@ public class MenuManager : MonoBehaviour
     void SpawnPoliceCar()
     {
         mainSpawner.policeNeedSpawning = true;
-        print("We get Here");
+    }
+
+    void SpawnAmbulance()
+    {
+        if (mainSpawner.isAmbulance2 == false)
+        {
+            mainSpawner.ambulanceNeedSpawning = true;
+        }
     }
 
     void ApplySettings()

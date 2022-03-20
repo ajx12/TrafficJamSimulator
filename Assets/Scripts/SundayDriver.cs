@@ -17,6 +17,7 @@ public class SundayDriver : SimpleCar
         Lane3 = mainSpawner.L3List;
         whichLaneStart();
         activated = true;
+        ShiftOnCooldown = true;
     }
 
     // Update is called once per frame
@@ -40,7 +41,7 @@ public class SundayDriver : SimpleCar
             {
                 ShiftOnCooldown = false;
                cooldown = 0;
-                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false)
+                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false && mainSpawner.isAmbulance2 == false)
                 {
                     if (currentLane < targetLane)
                     {
@@ -65,7 +66,7 @@ public class SundayDriver : SimpleCar
         {
             count++;
         }
-        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false)
+        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false && mainSpawner.isAmbulance2 == false)
         {
             tryToMoveInwards();
         }
@@ -118,12 +119,18 @@ public class SundayDriver : SimpleCar
 
         if (transform.position.z > 500)
         {
-            lane.RemoveAt(currentIndex);
-            Destroy(thisCar);
+            deleteTheCar(currentIndex);
         }
     }
 
+    
 
+    public override void deleteTheCar(int currentIndex)
+    {
+        lane.RemoveAt(currentIndex);
+        Destroy(thisCar);
+        activated = false;
+    }
 
 
 }

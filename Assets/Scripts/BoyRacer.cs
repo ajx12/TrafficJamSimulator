@@ -16,6 +16,7 @@ public class BoyRacer : SimpleCar
         Lane3 = mainSpawner.L3List;
         whichLaneStart();
         activated = true;
+        ShiftOnCooldown = true;
     }
 
     // Update is called once per frame
@@ -41,7 +42,7 @@ public class BoyRacer : SimpleCar
             {
                 ShiftOnCooldown = false;
                 cooldown = 0;
-                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
+                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && mainSpawner.isAmbulance2 == false)
                 {
                     if (currentLane < targetLane)
                     {
@@ -56,7 +57,7 @@ public class BoyRacer : SimpleCar
         }
         if (count >= 6)
         {
-            if (speed < laneSpeed + 10 && beingHeldUp == false)
+            if (speed < laneSpeed + 20 && beingHeldUp == false)
             {
                 speed = speed + 2;
             }
@@ -66,11 +67,15 @@ public class BoyRacer : SimpleCar
         {
             count++;
         }
-        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false)
+        if (mainSpawner.isPoliceCar == true && beingHeldUp == false)
+        {
+            speed = laneSpeed;
+        }
+        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false && mainSpawner.isAmbulance2 == false)
         {
             tryToMoveInwards();
         }
-        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
+        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && mainSpawner.isAmbulance2 == false)
         {
             tryToOvertake();
         }
@@ -142,9 +147,8 @@ public class BoyRacer : SimpleCar
             float distanceDifference = 0;
 
             distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
-            if (distanceDifference <= 14)
+            if (distanceDifference <= 12)
             {
-                //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
                 speed = carInfrontAttributes.speed;
                 beingHeldUp = true;
             }
@@ -159,9 +163,15 @@ public class BoyRacer : SimpleCar
         //once the car reaches the end of the road:
         if (transform.position.z > 500)
         {
-            lane.RemoveAt(currentIndex);
-            Destroy(thisCar);
+            deleteTheCar(currentIndex);
         }
+    }
+
+    public override void deleteTheCar(int currentIndex)
+    {
+        lane.RemoveAt(currentIndex);
+        Destroy(thisCar);
+        activated = false;
     }
 
 

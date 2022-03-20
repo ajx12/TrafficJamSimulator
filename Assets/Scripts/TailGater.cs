@@ -43,7 +43,7 @@ public class TailGater : SimpleCar
             {
                 ShiftOnCooldown = false;
                 cooldown = 0;
-                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
+                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && mainSpawner.isAmbulance2 == false)
                 {
                     if (currentLane < targetLane)
                     {
@@ -68,11 +68,15 @@ public class TailGater : SimpleCar
         {
             count++;
         }
-        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false)
+        if(mainSpawner.isPoliceCar == true && beingHeldUp == false)
+        {
+            speed = laneSpeed - 3;
+        }
+        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false && mainSpawner.isAmbulance2 == false)
         {
             tryToMoveInwards();
         }
-        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && currentLane != targetLane)
+        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && currentLane != targetLane && mainSpawner.isAmbulance2 == false)
         {
             tryToOvertake();
         }
@@ -142,16 +146,31 @@ public class TailGater : SimpleCar
             float distanceDifference = 0;
 
             distanceDifference = carInfront.transform.position.z - thisCar.transform.position.z;
-            if (distanceDifference <= 14)
+            if (mainSpawner.isPoliceCar == true)
             {
-                //print("difference is " + distanceDifference + "when the two things are" + carInfront.transform.position.z + " - " + thisCar.transform.position.z);
-                speed = carInfrontAttributes.speed;
-                beingHeldUp = true;
+                if (distanceDifference <= 14)
+                {
+                    speed = carInfrontAttributes.speed;
+                    beingHeldUp = true;
+                }
+                if (distanceDifference <= 16)
+                {
+                    carInfrontAttributes.holdingSomeoneUp = true;
+                }
             }
-            if (distanceDifference <= 16)
+            else
             {
-                carInfrontAttributes.holdingSomeoneUp = true;
+                if (distanceDifference <= 8)
+                {
+                    speed = carInfrontAttributes.speed;
+                    beingHeldUp = true;
+                }
+                if (distanceDifference <= 16)
+                {
+                    carInfrontAttributes.holdingSomeoneUp = true;
+                }
             }
+            
         }
 
 
@@ -159,9 +178,15 @@ public class TailGater : SimpleCar
         //once the car reaches the end of the road:
         if (transform.position.z > 500)
         {
-            lane.RemoveAt(currentIndex);
-            Destroy(thisCar);
+            deleteTheCar(currentIndex);
         }
+    }
+
+    public override void deleteTheCar(int currentIndex)
+    {
+        lane.RemoveAt(currentIndex);
+        Destroy(thisCar);
+        activated = false;
     }
 
 

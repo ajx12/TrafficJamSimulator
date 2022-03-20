@@ -6,8 +6,8 @@ public class SafeDriver : SimpleCar
 {
 
     //Black Car
-    bool activated = false;
-    int targetLane = 1;
+    protected bool activated = false;
+    protected int targetLane = 1;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,6 +17,7 @@ public class SafeDriver : SimpleCar
         Lane3 = mainSpawner.L3List;
         whichLaneStart();
         activated = true;
+        ShiftOnCooldown = true;
     }
 
     // Update is called once per frame
@@ -28,8 +29,8 @@ public class SafeDriver : SimpleCar
         }
     }
 
-    int count = 0;
-    int cooldown = 0;
+    protected int count = 0;
+    protected int cooldown = 0;
     public override void moveTheCar()
     {
         int currentIndex = lane.IndexOf(thisCar);
@@ -41,7 +42,7 @@ public class SafeDriver : SimpleCar
             {
                 ShiftOnCooldown = false;
                 cooldown = 0;
-                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
+                if (currentLane != targetLane && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && mainSpawner.isAmbulance2 == false)
                 {
                     if (currentLane < targetLane)
                     {
@@ -66,11 +67,15 @@ public class SafeDriver : SimpleCar
         {
             count++;
         }
-        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
+        if (mainSpawner.isPoliceCar == true && beingHeldUp == false)
+        {
+            speed = laneSpeed - 5;
+        }
+        if (holdingSomeoneUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && mainSpawner.isAmbulance2 == false)
         {
             tryToMoveInwards();
         }
-        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && currentLane != 2)
+        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && currentLane != 2 && mainSpawner.isAmbulance2 == false)
         {
             tryToOvertake();
         }
@@ -160,9 +165,15 @@ public class SafeDriver : SimpleCar
             //once the car reaches the end of the road:
             if (transform.position.z > 500)
             {
-                lane.RemoveAt(currentIndex);
-                Destroy(thisCar);
+                deleteTheCar(currentIndex);
             }
+    }
+
+    public override void deleteTheCar(int currentIndex)
+    {
+        lane.RemoveAt(currentIndex);
+        Destroy(thisCar);
+        activated = false;
     }
 
 

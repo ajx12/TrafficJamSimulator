@@ -22,6 +22,7 @@ public abstract class SimpleCar : MonoBehaviour
     protected bool ShiftOnCooldown = false;
     protected int currentShiftCooldown = 0;
 
+
     public ArrayList lane;
     protected double currLaneX;
     protected float laneSpeed;
@@ -118,7 +119,7 @@ public abstract class SimpleCar : MonoBehaviour
                 return i;
             }
         }
-        return 0;
+        return otherLane.Count;
     }
 
 
@@ -241,5 +242,7 @@ public abstract class SimpleCar : MonoBehaviour
 
 
     public abstract void moveTheCar();
+
+    public abstract void deleteTheCar(int currentIndex);
 
 }

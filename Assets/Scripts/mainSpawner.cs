@@ -38,8 +38,11 @@ public class mainSpawner : MonoBehaviour
     public static int ln3Sun = 0;
     public static int ln3Tg = 100;
     public static bool policeNeedSpawning = false;
+    public static bool ambulanceNeedSpawning = false;
     public static bool isPoliceCar = false;
-    public static bool isAmbulance = false;
+    public static bool isAmbulance1 = false;
+    public static bool isAmbulance2 = false;
+    public static bool isAmbulance3 = false;
 
 
     // Start is called before the first frame update
