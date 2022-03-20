@@ -20,6 +20,10 @@ public class GenerateTraffic : MonoBehaviour
 
     [SerializeField] GameObject BlackCar;
 
+    [SerializeField] GameObject PoliceCar;
+
+    [SerializeField] GameObject Ambulance;
+
     public GameObject Lane1;
     public GameObject Lane2;
     public GameObject Lane3;
@@ -77,9 +81,8 @@ public class GenerateTraffic : MonoBehaviour
             }
 
 
-            lowerChance = (float)(25 / spawnerMultiplier);
+            lowerChance = (float)(20 / spawnerMultiplier);
             upperChance = (float)(35 / spawnerMultiplier);
-            print("lane1 is low then up: " + lowerChance + " " + upperChance);
         }
         if (this.gameObject == Lane2)
         {
@@ -106,9 +109,8 @@ public class GenerateTraffic : MonoBehaviour
                     }
                 }
             }
-            lowerChance = (float)(25 / spawnerMultiplier);
-            upperChance = (float)(35 / spawnerMultiplier);
-            print("lane2 is low then up: " + lowerChance + " " + upperChance);
+            lowerChance = (float)(20 / spawnerMultiplier);
+            upperChance = (float)(30 / spawnerMultiplier);
         }
         if (this.gameObject == Lane3)
         {
@@ -135,9 +137,8 @@ public class GenerateTraffic : MonoBehaviour
                     }
                 }
             }
-            lowerChance = (float)(35 / spawnerMultiplier);
-            upperChance = (float)(45 / spawnerMultiplier);
-            print("lane3 is low then up: " + lowerChance + " " + upperChance);
+            lowerChance = (float)(25 / spawnerMultiplier);
+            upperChance = (float)(40 / spawnerMultiplier);
         }
     }
 
@@ -150,6 +151,14 @@ public class GenerateTraffic : MonoBehaviour
             setVariables();
             count = 0;
             nextSpawn = Random.Range(lowerChance, upperChance+1);
+            if (mainSpawner.policeNeedSpawning == true)
+            {
+                GameObject newCar = Instantiate(PoliceCar, transform);
+                addNewCarToLane(newCar);
+                mainSpawner.policeNeedSpawning = false;
+                mainSpawner.isPoliceCar = true;
+                return;
+            }
             int whichColour = Random.Range(1, 101); //random from 1 to 100
             if (brChance != 0)
             {

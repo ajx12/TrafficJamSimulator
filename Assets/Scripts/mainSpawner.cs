@@ -14,9 +14,11 @@ public class mainSpawner : MonoBehaviour
     public static float maxSpeedL1 = 30;
     public static float maxSpeedL2 = 40;
     public static float maxSpeedL3 = 55;
-    public static double L1X = -12;
-    public static double L2X = -1;
-    public static double L3X = 11;
+    public static double L1X = -12.5;
+    public static double AmbulanceL1L2 = -7;
+    public static double L2X = -1.5;
+    public static double AmbulanceL2L3 = 6;
+    public static double L3X = 10.5;
     public static ArrayList L1List = new ArrayList();
     public static ArrayList L2List = new ArrayList();
     public static ArrayList L3List = new ArrayList();
@@ -35,6 +37,9 @@ public class mainSpawner : MonoBehaviour
     public static int ln3Safe = 55;
     public static int ln3Sun = 0;
     public static int ln3Tg = 100;
+    public static bool policeNeedSpawning = false;
+    public static bool isPoliceCar = false;
+    public static bool isAmbulance = false;
 
 
     // Start is called before the first frame update

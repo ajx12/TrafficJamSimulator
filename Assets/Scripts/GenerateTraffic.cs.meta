@@ -8,6 +8,12 @@ MonoImporter:
   - BlueCar: {fileID: 6173456250622711511, guid: e949de95dc4d8844fbee41ad152b4e91, type: 3}
   - OrangeCar: {fileID: 1079300186618957496, guid: 9eafa01cc683ebe49a0266e0f1b3acf0, type: 3}
   - BlackCar: {fileID: 7089050194127134633, guid: 4eb236a0e700888469941b97860b8b59, type: 3}
+  - PoliceCar: {fileID: 1219529794149890354, guid: 47186a6a545f7d240a55ab69e89513c0, type: 3}
+  - Ambulance: {fileID: 4940102575558875589, guid: c4d70a266ad6258499e33f41a54375cb, type: 3}
+  - Lane1: {instanceID: 0}
+  - Lane2: {instanceID: 0}
+  - Lane3: {instanceID: 0}
+  - theLane: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

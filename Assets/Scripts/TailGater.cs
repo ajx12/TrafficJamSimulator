@@ -72,7 +72,7 @@ public class TailGater : SimpleCar
         {
             tryToMoveInwards();
         }
-        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5)
+        if (beingHeldUp == true && isMergingLane == false && ShiftOnCooldown == false && distanceFromStart > 5 && currentLane != targetLane)
         {
             tryToOvertake();
         }

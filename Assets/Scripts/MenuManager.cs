@@ -28,6 +28,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] GameObject SunTBLn3;
     [SerializeField] GameObject TgTBLn3;
     [SerializeField] GameObject NumCarSlider;
+    [SerializeField] GameObject SpawnPoliceCarBtn;
+    [SerializeField] GameObject SpawnAmbulanceBtn;
     TMP_InputField BrChanceL1;
     TMP_InputField SafeChanceL1;
     TMP_InputField SunChanceL1;
@@ -51,6 +53,8 @@ public class MenuManager : MonoBehaviour
         SettingsButton.onClick.AddListener(OpenSettings);
         Button ApplyButton = ApplySettingsBtn.GetComponent<Button>();
         ApplyButton.onClick.AddListener(ApplySettings);
+        Button SpwnPol = SpawnPoliceCarBtn.GetComponent<Button>(); //Spawns a Police Car
+        SpwnPol.onClick.AddListener(SpawnPoliceCar);
         Button CloseSettingsButton = CloseSettingsBtn.GetComponent<Button>();
         CloseSettingsButton.onClick.AddListener(CloseSettings);
         BrChanceL1 = BrTBLn1.GetComponent<TMP_InputField>();
@@ -146,6 +150,12 @@ public class MenuManager : MonoBehaviour
         CloseLane1Btn.SetActive(true);
         CloseLane2Btn.SetActive(true);
         CloseLane3Btn.SetActive(true);
+    }
+
+    void SpawnPoliceCar()
+    {
+        mainSpawner.policeNeedSpawning = true;
+        print("We get Here");
     }
 
     void ApplySettings()
