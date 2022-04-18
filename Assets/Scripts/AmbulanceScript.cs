@@ -6,7 +6,6 @@ public class AmbulanceScript : SimpleCar
 {
     public double target;
     public Vector3 direction;
-    protected GameObject theAmbulance;
     // Start is called before the first frame update
     void Start()
     {

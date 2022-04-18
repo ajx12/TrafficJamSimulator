@@ -5,8 +5,8 @@ using UnityEngine;
 public class BoyRacer : SimpleCar
 {
     //Orange car
-    bool activated = false;
-    int targetLane = 3;
+    protected bool activated = false;
+    protected int targetLane = 3;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,8 +29,8 @@ public class BoyRacer : SimpleCar
     }
 
 
-    int count = 0; // after every set frames, the car speed will increase.
-    int cooldown = 0;
+    protected int count = 0; // after every set frames, the car speed will increase.
+    protected int cooldown = 0;
     public override void moveTheCar()
     {
         int currentIndex = lane.IndexOf(thisCar);

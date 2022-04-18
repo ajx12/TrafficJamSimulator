@@ -6,8 +6,8 @@ public class SundayDriver : SimpleCar
 {
     //Blue Car
 
-    bool activated = false;
-    int targetLane = 1;
+    protected bool activated = false;
+    protected int targetLane = 1;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,8 +30,8 @@ public class SundayDriver : SimpleCar
     }
 
 
-    int count = 0;
-    int cooldown = 0;
+    protected int count = 0;
+    protected int cooldown = 0;
     public override void moveTheCar()
     {
         if (ShiftOnCooldown == true)

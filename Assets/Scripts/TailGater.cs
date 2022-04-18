@@ -6,8 +6,8 @@ public class TailGater : SimpleCar
 {
     //Red Car
     
-    bool activated = false;
-    int targetLane;
+    protected bool activated = false;
+    protected int targetLane;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,8 +30,8 @@ public class TailGater : SimpleCar
     }
 
 
-    int count = 0;
-    int cooldown = 0;
+    protected int count = 0;
+    protected int cooldown = 0;
     public override void moveTheCar()
     {
         int currentIndex = lane.IndexOf(thisCar);
